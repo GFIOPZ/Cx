@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>hassanyIPA | متجر تطبيقات iOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #09090b;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #8b5cf6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --glass-blur: blur(16px);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* خلفية متدرجة متحركة خفيفة */
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+      background-attachment: fixed;
+    }
+
+    /* تأثيرات الدخول */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    /* الهيدر */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* شريط البحث */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      position: relative;
+      animation: fadeInUp 0.7s ease-out;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1.2rem 3.5rem 1.2rem 1.5rem;
+      border-radius: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      font-size: 1.05rem;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: var(--transition);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* الأقسام */
+    .categories {
+      display: flex;
+      gap: 0.8rem;
+      overflow-x: auto;
+      padding: 0.5rem 0 1.5rem;
+      margin-bottom: 2rem;
+      scrollbar-width: none;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      padding: 0.7rem 1.5rem;
+      border-radius: 100px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+      backdrop-filter: var(--glass-blur);
+    }
+
+    .cat-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    .cat-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    /* شبكة التطبيقات */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: var(--transition);
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .app-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: rgba(96, 165, 250, 0.4);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.15);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .app-header {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .app-icon {
+      width: 75px;
+      height: 75px;
+      border-radius: 18px;
+      object-fit: cover;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: var(--transition);
+    }
+
+    .app-card:hover .app-icon {
+      transform: rotate(-3deg) scale(1.05);
+    }
+
+    .app-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .app-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-meta {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .badge svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+    .btn-view {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 14px;
+      background: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .app-card:hover .btn-view {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    /* النافذة المنبثقة (المودل) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #18181b; /* لون داكن صلب للمودل ليكون واضحاً */
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem 1.5rem;
+      position: relative;
+      transform: scale(0.9) translateY(20px);
+      transition: var(--transition);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      background-image: radial-gradient(circle at top right, rgba(139, 92, 246, 0.1), transparent 50%);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .btn-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 10;
+    }
+
+    .btn-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      transform: rotate(90deg);
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-icon-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .modal-icon {
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      background: rgba(0,0,0,0.2);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      direction: ltr;
+    }
+
+    .modal-mod-card {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px dashed rgba(16, 185, 129, 0.4);
+      border-radius: 16px;
+      padding: 1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .modal-mod-card span {
+        color: #34d399;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      padding: 1.1rem;
+      border-radius: 16px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+      transition: var(--transition);
+    }
+
+    .btn-download:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(139, 92, 246, 0.4);
+    }
+
+    .btn-screenshot {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 1rem;
+      border-radius: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .btn-screenshot:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* التحميل والاشعارات */
+    .loader-container {
+      text-align: center;
+      padding: 3rem;
+      grid-column: 1 / -1;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-left-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    .btn-load-more {
+      display: block;
+      margin: 3rem auto;
+      padding: 1rem 3rem;
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: #60a5fa;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-load-more:hover {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #18181b;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: var(--transition);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toast.show {
+      bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>hassanyIPA</h1>
+      <p>المتجر الأسرع والأكثر أماناً لتحميل تطبيقات وألعاب الـ iOS</p>
+    </header>
+
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="ابحث عن تطبيق أو لعبة...">
+    </div>
+
+    <div class="categories" id="categoriesContainer">
+      <button class="cat-btn active" data-id="">الكل</button>
+    </div>
+
+    <div class="apps-grid" id="appsGrid"></div>
+    
+    <div id="loader" class="loader-container">
+      <div class="spinner"></div>
+      <p style="color: var(--text-muted); font-weight: 600;">جاري سحب التطبيقات...</p>
+    </div>
+
+    <button class="btn-load-more" id="loadMoreBtn" style="display: none;">تحميل المزيد</button>
+  </div>
+
+  <!-- النافذة المنبثقة -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content" id="modalContent">
+      <button class="btn-close no-capture" id="btnCloseModal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+
+      <div class="modal-header">
+        <div class="modal-icon-wrap">
+          <img class="modal-icon" id="modalIcon" src="" alt="App Icon" crossorigin="anonymous">
+        </div>
+        <h2 class="modal-title" id="modalTitle">اسم التطبيق</h2>
+      </div>
+
+      <div class="modal-stats">
+        <div class="stat-item">
+          <div class="stat-label">الإصدار</div>
+          <div class="stat-val" id="modalVersion">1.0</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">الحجم</div>
+          <div class="stat-val" id="modalSize">--</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">التقييم</div>
+          <div class="stat-val" style="color: #fbbf24;">★ <span id="modalRating">5.0</span></div>
+        </div>
+      </div>
+
+      <div class="modal-mod-card" id="modalModSection" style="display: none;">
+        <span id="modalModInfo">ميزات البلس والتعديل</span>
+      </div>
+
+      <div class="modal-actions no-capture">
+        <a href="#" class="btn-download" id="modalDownloadLink" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          تحميل IPA
+        </a>
+        <button class="btn-screenshot" id="btnScreenshot">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          حفظ صورة للتطبيق
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toastMsg">تم بنجاح!</span>
+  </div>
+
+  <script>
+    const API_BASE = 'https://ipaomtk.com/wp-json/wp/v2';
+    let currentPage = 1;
+    let selectedCategory = '';
+    let currentSearch = '';
+    let isLoading = false;
+    let loadedPosts = {};
+
+    const appsGrid = document.getElementById('appsGrid');
+    const categoriesContainer = document.getElementById('categoriesContainer');
+    const loader = document.getElementById('loader');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const searchInput = document.getElementById('searchInput');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+
+    // تنظيف البيانات وجعلها حصرية لـ hassanyIPA
+    function cleanText(str) {
+      if (!str) return '';
+      return str.replace(/ipaomtk\.com/gi, 'hassanyIPA')
+                .replace(/ipaomtk/gi, 'hassanyIPA')
+                .replace(/omtk/gi, 'hassanyIPA')
+                .trim();
+    }
+
+    function showToast(msg) {
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // جلب البيانات مع تجاوز CORS
+    function fetchJsonp(url) {
+      return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        const separator = url.includes('?') ? '&' : '?';
+        const script = document.createElement('script');
+        script.src = `${url}${separator}_jsonp=${callbackName}`;
+        
+        window[callbackName] = (data) => {
+          delete window[callbackName];
+          document.head.removeChild(script);
+          resolve(data);
+        };
+        script.onerror = () => reject(new Error('Network Error'));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function fetchData(url) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) return await res.json();
+      } catch (e) {}
+      return await fetchJsonp(url);
+    }
+
+    // استخراج الأيقونة
+    function getAppIcon(post) {
+      const fm = post._embedded?.['wp:featuredmedia']?.[0];
+      return fm?.source_url || post.yoast_head_json?.og_image?.[0]?.url || 'https://via.placeholder.com/150/18181b/ffffff?text=APP';
+    }
+
+    // جلب الأقسام
+    async function initCategories() {
+      const cats = await fetchData(`${API_BASE}/categories?per_page=100`);
+      if (Array.isArray(cats)) {
+        cats.forEach(cat => {
+          if (cat.count > 0) {
+            const btn = document.createElement('button');
+            btn.className = 'cat-btn';
+            btn.textContent = cleanText(cat.name);
+            btn.onclick = () => {
+              document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              selectedCategory = cat.id;
+              resetAndFetch();
+            };
+            categoriesContainer.appendChild(btn);
+          }
+        });
+      }
+    }
+
+    // جلب وعرض التطبيقات
+    async function fetchApps() {
+      if (isLoading) return;
+      isLoading = true;
+      loader.style.display = 'block';
+      loadMoreBtn.style.display = 'none';
+
+      let url = `${API_BASE}/posts?per_page=18&page=${currentPage}&_embed=1`;
+      if (selectedCategory) url += `&categories=${selectedCategory}`;
+      if (currentSearch) url += `&search=${encodeURIComponent(currentSearch)}`;
+
+      const posts = await fetchData(url);
+      
+      if (!Array.isArray(posts) || posts.length === 0) {
+        if (currentPage === 1) appsGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#94a3b8;">لا توجد تطبيقات مطابقة.</div>';
+      } else {
+        posts.forEach((post, index) => {
+          loadedPosts[post.id] = post;
+          const title = cleanText(post.title?.rendered || 'تطبيق hassanyIPA');
+          const version = post.app_details?.version || '1.0';
+          const size = post.app_details?.size || 'MB';
+          const icon = getAppIcon(post);
+
+          const card = document.createElement('div');
+          card.className = 'app-card';
+          card.style.animationDelay = `${index * 0.05}s`; // تأثير دخول متدرج
+          card.onclick = () => openModal(post.id);
+          card.innerHTML = `
+            <div>
+              <div class="app-header">
+                <img class="app-icon" src="${icon}" loading="lazy">
+                <div class="app-info">
+                  <div class="app-name">${title}</div>
+                  <div class="app-meta">
+                    <span class="badge">v${version}</span>
+                    <span class="badge">${size}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn-view">تثبيت الآن</button>
+          `;
+          appsGrid.appendChild(card);
+        });
+        loadMoreBtn.style.display = 'block';
+      }
+      
+      loader.style.display = 'none';
+      isLoading = false;
+    }
+
+    function resetAndFetch() {
+      currentPage = 1;
+      appsGrid.innerHTML = '';
+      fetchApps();
+    }
+
+    // البحث مع تأخير (Debounce)
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentSearch = e.target.value.trim();
+        resetAndFetch();
+      }, 500);
+    });
+
+    loadMoreBtn.onclick = () => { currentPage++; fetchApps(); };
+
+    // نظام النافذة المنبثقة
+    const modal = document.getElementById('modalOverlay');
+    
+    function openModal(id) {
+      const post = loadedPosts[id];
+      const title = cleanText(post.title?.rendered);
+      const version = post.app_details?.version || post.downloads?.[0]?.download_version || '1.0';
+      
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalIcon').src = getAppIcon(post);
+      document.getElementById('modalVersion').textContent = 'v' + version;
+      document.getElementById('modalSize').textContent = post.app_details?.size || post.downloads?.[0]?.download_size || 'غير معروف';
+      document.getElementById('modalRating').textContent = post.app_details?.rating || '5.0';
+      
+      const modInfo = cleanText(post.app_mod?.feature || post.app_mod?.information);
+      if (modInfo) {
+        document.getElementById('modalModSection').style.display = 'block';
+        document.getElementById('modalModInfo').innerHTML = modInfo;
+      } else {
+        document.getElementById('modalModSection').style.display = 'none';
+      }
+
+      const cleanFileName = `${title.replace(/[^a-zA-Z0-9\u0600-\u06FF_-]/g, '')}_hassanyIPA.ipa`;
+      const dlBtn = document.getElementById('modalDownloadLink');
+      dlBtn.href = post.downloads?.[0]?.download_url || '#';
+      dlBtn.setAttribute('download', cleanFileName);
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('btnCloseModal').onclick = closeModal;
+    modal.onclick = (e) => { if(e.target === modal) closeModal(); }
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // التقاط صورة احترافية
+    document.getElementById('btnScreenshot').onclick = async () => {
+      const content = document.getElementById('modalContent');
+      const icon = document.getElementById('modalIcon');
+      const originalSrc = icon.src;
+      
+      showToast('جاري تحضير الصورة...');
+      
+      try {
+        // بروكسي لتجاوز مشكلة الكانفاس الأبيض للأيقونة
+        if(!originalSrc.startsWith('data:')) {
+          const proxyUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(originalSrc) + '&w=200&output=png';
+          icon.src = proxyUrl;
+          await new Promise(r => { icon.onload = r; setTimeout(r, 1500); });
+        }
+
+        const canvas = await html2canvas(content, {
+          scale: 2,
+          backgroundColor: '#09090b',
+          useCORS: true,
+          ignoreElements: (el) => el.classList.contains('no-capture')
+        });
+
+        const link = document.createElement('a');
+        link.download = 'hassanyIPA_' + document.getElementById('modalTitle').textContent + '.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showToast('تم حفظ الصورة بنجاح!');
+      } catch (e) {
+        showToast('فشل التقاط الصورة');
+      } finally {
+        icon.src = originalSrc;
+      }
+    };
+
+    // التشغيل الأولي
+    initCategories();
+    fetchApps();
+  </script>
+</body>
+</html>
